@@ -362,7 +362,7 @@ if __name__ == "__main__":
     for YEAR in TRAINING_INTERVAL:
         x.append(YEAR)
         y_daily.append(climate.get_daily_temp("NEW YORK", 1, 10, YEAR))
-        y_yearly.append(pylab.mean(climate.get_yearly_temp("NEW YORK", YEAR)))
+        y_yearly.append((climate.get_yearly_temp("NEW YORK", YEAR)).mean())
 
     models_daily = generate_models(x, y_daily, [1])
     models_yearly = generate_models(x, y_yearly, [1])
