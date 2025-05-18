@@ -262,7 +262,13 @@ def gen_cities_avg(climate, multi_cities, years):
         cities for a given year.
     """
     # TODO
-    pass
+    result = []
+    for YEAR in years:
+        sum = 0
+        for CITY in multi_cities:
+            sum += climate.get_yearly_temp(CITY, YEAR).mean()
+        result.append(sum / len(multi_cities))
+    return result
 
 
 def moving_average(y, window_length):
@@ -368,10 +374,14 @@ if __name__ == "__main__":
     models_yearly = generate_models(x, y_yearly, [1])
 
     evaluate_models_on_training(x, y_daily, models_daily)
-    evaluate_models_on_training(x, y_daily, models_yearly)
+    evaluate_models_on_training(x, y_yearly, models_yearly)
 
     # Part B
-    # TODO: replace this line with your code
+    national_yearly_average = gen_cities_avg(climate, CITIES, TRAINING_INTERVAL)
+
+    models_national_yearly = generate_models(x, national_yearly_average, [1])
+
+    evaluate_models_on_training(x, national_yearly_average, models_national_yearly)
 
     # Part C
     # TODO: replace this line with your code
