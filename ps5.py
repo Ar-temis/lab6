@@ -238,7 +238,7 @@ def evaluate_models_on_training(x, y, models):
 
         title = f"Degree: {deg}, R²: {r2:.4f}"
         if deg == 1:
-            se_slope = se_over_slope(x, y, model)
+            se_slope = se_over_slope(x, y, estimated, model)
             title += f", SE/slope: {se_slope:.4f}"
 
         plt.title(title)
@@ -355,7 +355,15 @@ if __name__ == "__main__":
     )
 
     # Part A.4
-    # TODO: replace this line with your code
+    x = []
+    y = []
+    climate = Climate("data.csv")
+    for YEAR in TRAINING_INTERVAL:
+        x.append(YEAR)
+        y.append(climate.get_daily_temp("NEW YORK", 1, 10, YEAR))
+    models = generate_models(x, y, [1])
+
+    evaluate_models_on_training(x, y, models)
 
     # Part B
     # TODO: replace this line with your code
