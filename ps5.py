@@ -233,8 +233,8 @@ def evaluate_models_on_training(x, y, models):
 
         plt.plot(x, y, "bo", label="Data points")
         plt.plot(x, estimated, "r-", label=f"Degree {deg} fit")
-        plt.xlabel("x")
-        plt.ylabel("y")
+        plt.xlabel("Year")
+        plt.ylabel("Temperature in Celsius")
 
         title = f"Degree: {deg}, R²: {r2:.4f}"
         if deg == 1:
@@ -356,14 +356,19 @@ if __name__ == "__main__":
 
     # Part A.4
     x = []
-    y = []
+    y_daily = []
+    y_yearly = []
     climate = Climate("data.csv")
     for YEAR in TRAINING_INTERVAL:
         x.append(YEAR)
-        y.append(climate.get_daily_temp("NEW YORK", 1, 10, YEAR))
-    models = generate_models(x, y, [1])
+        y_daily.append(climate.get_daily_temp("NEW YORK", 1, 10, YEAR))
+        y_yearly.append(pylab.mean(climate.get_yearly_temp("NEW YORK", YEAR)))
 
-    evaluate_models_on_training(x, y, models)
+    models_daily = generate_models(x, y_daily, [1])
+    models_yearly = generate_models(x, y_yearly, [1])
+
+    evaluate_models_on_training(x, y_daily, models_daily)
+    evaluate_models_on_training(x, y_daily, models_yearly)
 
     # Part B
     # TODO: replace this line with your code
