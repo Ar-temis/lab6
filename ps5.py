@@ -144,7 +144,7 @@ def se_over_slope(x, y, estimated, model):
     assert len(y) == len(estimated)
     assert len(x) == len(estimated)
     EE = ((estimated - y) ** 2).sum()
-    var_x = ((x - x.mean()) ** 2).sum()
+    var_x = ((x - pylab.mean(x)) ** 2).sum()
     SE = pylab.sqrt(EE / (len(x) - 2) / var_x)
     return SE / model[0]
 
