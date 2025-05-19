@@ -5,7 +5,7 @@
 # Time:
 
 import pylab
-import math
+import numpy as np
 import re
 import matplotlib.pyplot as plt
 
@@ -238,7 +238,7 @@ def evaluate_models_on_training(x, y, models, title):
         showing_title = f"{title}\nDegree: {deg}, R²: {r2:.4f}"
         if deg == 1:
             se_slope = se_over_slope(x, y, estimated, model)
-            title += f", SE/slope: {se_slope:.4f}"
+            showing_title += f", SE/slope: {se_slope:.4f}"
 
         plt.title(showing_title)
         plt.legend()
@@ -312,10 +312,7 @@ def rmse(y, estimated):
     Returns:
         a float for the root mean square error term
     """
-    sum = 0
-    for i in range(len(y)):
-        sum += (y[i] - estimated[i]) ** 2
-    return math.sqrt((sum / len(y)))
+    return np.sqrt(np.mean((np.array(y) - np.array(estimated)) ** 2))
 
 
 def gen_std_devs(climate, multi_cities, years):
@@ -448,6 +445,13 @@ if __name__ == "__main__":
         mov_avg_testing,
         models_moving_avg,
         "National Moving.avg 5 (testing)",
+    )
+
+    models_moving_avg_testing = generate_models(
+        TESTING_INTERVAL, mov_avg_testing, [1, 2, 20]
+    )
+    evaluate_models_on_training(
+        TESTING_INTERVAL, mov_avg_testing, models_moving_avg_testing, "testing..."
     )
     # Part E
     # TODO: replace this line with your code
