@@ -5,6 +5,7 @@
 # Time:
 
 import pylab
+import math
 import re
 import matplotlib.pyplot as plt
 
@@ -199,7 +200,7 @@ def r_squared(y, estimated):
     return 1 - (upper_sum / lower_sum)
 
 
-def evaluate_models_on_training(x, y, models):
+def evaluate_models_on_training(x, y, models, title):
     """
     For each regression model, compute the R-squared value for this model with the
     standard error over slope of a linear regression line (only if the model is
@@ -213,9 +214,7 @@ def evaluate_models_on_training(x, y, models):
         R-square of your model evaluated on the given data points,
         and SE/slope (if degree of this model is 1 -- see se_over_slope).
 
-    Args:
-        x: an 1-d pylab array with length N, representing the x-coordinates of
-            the N sample points
+            the N sample pointm
         y: an 1-d pylab array with length N, representing the y-coordinates of
             the N sample points
         models: a list containing the regression models you want to apply to
@@ -236,7 +235,7 @@ def evaluate_models_on_training(x, y, models):
         plt.xlabel("Year")
         plt.ylabel("Temperature in Celsius")
 
-        title = f"Degree: {deg}, R²: {r2:.4f}"
+        title = f"{title}\nDegree: {deg}, R²: {r2:.4f}"
         if deg == 1:
             se_slope = se_over_slope(x, y, estimated, model)
             title += f", SE/slope: {se_slope:.4f}"
@@ -313,8 +312,10 @@ def rmse(y, estimated):
     Returns:
         a float for the root mean square error term
     """
-    # TODO
-    pass
+    sum = 0
+    for i in range(len(y)):
+        sum += (y[i] - estimated[i]) ** 2
+    return math.sqrt((sum / len(y)))
 
 
 def gen_std_devs(climate, multi_cities, years):
@@ -336,7 +337,7 @@ def gen_std_devs(climate, multi_cities, years):
     pass
 
 
-def evaluate_models_on_testing(x, y, models):
+def evaluate_models_on_testing(x, y, models, title):
     """
     For each regression model, compute the RMSE for this model and plot the
     test data along with the model’s estimation.
@@ -360,39 +361,97 @@ def evaluate_models_on_testing(x, y, models):
     Returns:
         None
     """
-    # TODO
-    pass
+    for model in models:
+        plt.figure()
+        deg = len(model) - 1
+        estimated = pylab.polyval(model, x)
+        root_mean_se = rmse(y, estimated)
+
+        plt.plot(x, y, "bo", label="Data points")
+        plt.plot(x, estimated, "r-", label=f"Degree {deg} fit")
+        plt.xlabel("Year")
+        plt.ylabel("Temperature in Celsius")
+        title = f"{title}\nDegree: {deg}, RMSE: {root_mean_se:.4f}"
+
+        plt.title(title)
+        plt.legend()
+        plt.show()
 
 
 if __name__ == "__main__":
     # Part A.4
-    x = []
+    training_years = []
     y_daily = []
     y_yearly = []
     climate = Climate("data.csv")
     for YEAR in TRAINING_INTERVAL:
-        x.append(YEAR)
+        training_years.append(YEAR)
         y_daily.append(climate.get_daily_temp("NEW YORK", 1, 10, YEAR))
         y_yearly.append((climate.get_yearly_temp("NEW YORK", YEAR)).mean())
 
-    models_daily = generate_models(x, y_daily, [1])
-    models_yearly = generate_models(x, y_yearly, [1])
+    models_daily = generate_models(training_years, y_daily, [1])
+    models_yearly = generate_models(training_years, y_yearly, [1])
 
-    evaluate_models_on_training(x, y_daily, models_daily)
-    evaluate_models_on_training(x, y_yearly, models_yearly)
+    evaluate_models_on_training(
+        training_years,
+        y_daily,
+        models_daily,
+        "NEW YORK Daily (training)",
+    )
+    evaluate_models_on_training(
+        training_years,
+        y_yearly,
+        models_yearly,
+        "NEW YORK Yearly (training)",
+    )
 
     # Part B
-    national_yearly_average = gen_cities_avg(climate, CITIES, TRAINING_INTERVAL)
+    national_yearly_training = gen_cities_avg(climate, CITIES, TRAINING_INTERVAL)
 
-    models_national_yearly = generate_models(x, national_yearly_average, [1])
+    models_national_deg_one = generate_models(
+        training_years, national_yearly_training, [1]
+    )
 
-    evaluate_models_on_training(x, national_yearly_average, models_national_yearly)
+    evaluate_models_on_training(
+        training_years,
+        national_yearly_training,
+        models_national_deg_one,
+        "National Yearly (training)",
+    )
 
     # Part C
-    # TODO: replace this line with your code
+    mov_avg_training = moving_average(national_yearly_training, 5)
+
+    models_moving_avg_deg_one = generate_models(training_years, mov_avg_training, [1])
+
+    evaluate_models_on_training(
+        training_years,
+        mov_avg_training,
+        models_moving_avg_deg_one,
+        "National Moving.avg 5 (training)",
+    )
 
     # Part D.2
-    # TODO: replace this line with your code
+    models_moving_avg = generate_models(training_years, mov_avg_training, [1, 2, 20])
 
+    evaluate_models_on_training(
+        training_years,
+        mov_avg_training,
+        models_moving_avg,
+        "National Moving.avg 5 (training)",
+    )
+
+    testing_years = []
+    for YEAR in TESTING_INTERVAL:
+        testing_years.append(YEAR)
+
+    national_yearly_testing = gen_cities_avg(climate, CITIES, TESTING_INTERVAL)
+    mov_avg_testing = moving_average(national_yearly_testing, 5)
+    evaluate_models_on_testing(
+        testing_years,
+        mov_avg_testing,
+        models_moving_avg,
+        "National Moving.avg 5 (testing)",
+    )
     # Part E
     # TODO: replace this line with your code
