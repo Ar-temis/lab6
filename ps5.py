@@ -443,7 +443,7 @@ if __name__ == "__main__":
 
     national_yearly_testing = gen_cities_avg(climate, CITIES, TESTING_INTERVAL)
     mov_avg_testing = moving_average(national_yearly_testing, 5)
-    evaluate_models_on_training(
+    evaluate_models_on_testing(
         TESTING_INTERVAL,
         mov_avg_testing,
         models_moving_avg,
