@@ -227,7 +227,7 @@ def evaluate_models_on_training(x, y, models, title):
     for model in models:
         plt.figure()
         deg = len(model) - 1
-        estimated = pylab.polyval(model, x)
+        estimated = np.polyval(model, x)
         r2 = r_squared(y, estimated)
 
         plt.plot(x, y, "bo", label="Data points")
@@ -330,8 +330,28 @@ def gen_std_devs(climate, multi_cities, years):
         this array corresponds to the standard deviation of the average annual
         city temperatures for the given cities in a given year.
     """
-    # TODO
-    pass
+    result = []
+
+    for year in years:
+        daily_averages = []
+
+        for month in range(1, 13):
+            for day in range(1, 32):
+                try:
+                    day_temps = [
+                        climate.get_daily_temp(city, month, day, year)
+                        for city in multi_cities
+                    ]
+                    daily_avg = np.mean(day_temps)
+                    daily_averages.append(daily_avg)
+                except AssertionError:
+                    # One of the cities doesn't have data for this date — skip it
+                    continue
+
+        std_dev = np.std(daily_averages)
+        result.append(std_dev)
+
+    return pylab.array(result)
 
 
 def evaluate_models_on_testing(x, y, models, title):
@@ -361,7 +381,7 @@ def evaluate_models_on_testing(x, y, models, title):
     for model in models:
         plt.figure()
         deg = len(model) - 1
-        estimated = pylab.polyval(model, x)
+        estimated = np.polyval(model, x)
         root_mean_se = rmse(y, estimated)
 
         plt.plot(x, y, "bo", label="Data points")
@@ -447,11 +467,13 @@ if __name__ == "__main__":
         "National Moving.avg 5 (testing)",
     )
 
-    models_moving_avg_testing = generate_models(
-        TESTING_INTERVAL, mov_avg_testing, [1, 2, 20]
-    )
-    evaluate_models_on_training(
-        TESTING_INTERVAL, mov_avg_testing, models_moving_avg_testing, "testing..."
-    )
     # Part E
-    # TODO: replace this line with your code
+    std_values = gen_std_devs(climate, CITIES, TRAINING_INTERVAL)
+
+    std_mov_avg = moving_average(std_values, 5)
+
+    models_std = generate_models(TRAINING_INTERVAL, std_mov_avg, [1])
+
+    evaluate_models_on_training(
+        TRAINING_INTERVAL, std_mov_avg, models_std, "STD Moving.avg 5 (training)"
+    )
