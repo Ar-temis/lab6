@@ -380,26 +380,24 @@ def evaluate_models_on_testing(x, y, models, title):
 
 if __name__ == "__main__":
     # Part A.4
-    training_years = []
     y_daily = []
     y_yearly = []
     climate = Climate("data.csv")
     for YEAR in TRAINING_INTERVAL:
-        training_years.append(YEAR)
         y_daily.append(climate.get_daily_temp("NEW YORK", 1, 10, YEAR))
         y_yearly.append((climate.get_yearly_temp("NEW YORK", YEAR)).mean())
 
-    models_daily = generate_models(training_years, y_daily, [1])
-    models_yearly = generate_models(training_years, y_yearly, [1])
+    models_daily = generate_models(TRAINING_INTERVAL, y_daily, [1])
+    models_yearly = generate_models(TRAINING_INTERVAL, y_yearly, [1])
 
     evaluate_models_on_training(
-        training_years,
+        TRAINING_INTERVAL,
         y_daily,
         models_daily,
         "NEW YORK Yearly on JAN 1st (training)",
     )
     evaluate_models_on_training(
-        training_years,
+        TRAINING_INTERVAL,
         y_yearly,
         models_yearly,
         "NEW YORK Yearly avg (training)",
@@ -409,11 +407,11 @@ if __name__ == "__main__":
     national_yearly_training = gen_cities_avg(climate, CITIES, TRAINING_INTERVAL)
 
     models_national_deg_one = generate_models(
-        training_years, national_yearly_training, [1]
+        TRAINING_INTERVAL, national_yearly_training, [1]
     )
 
     evaluate_models_on_training(
-        training_years,
+        TRAINING_INTERVAL,
         national_yearly_training,
         models_national_deg_one,
         "National Yearly avg (training)",
@@ -422,33 +420,31 @@ if __name__ == "__main__":
     # Part C
     mov_avg_training = moving_average(national_yearly_training, 5)
 
-    models_moving_avg_deg_one = generate_models(training_years, mov_avg_training, [1])
+    models_moving_avg_deg_one = generate_models(
+        TRAINING_INTERVAL, mov_avg_training, [1]
+    )
 
     evaluate_models_on_training(
-        training_years,
+        TRAINING_INTERVAL,
         mov_avg_training,
         models_moving_avg_deg_one,
         "National Moving.avg 5 (training)",
     )
 
     # Part D.2
-    models_moving_avg = generate_models(training_years, mov_avg_training, [1, 2, 20])
+    models_moving_avg = generate_models(TRAINING_INTERVAL, mov_avg_training, [1, 2, 20])
 
     evaluate_models_on_training(
-        training_years,
+        TRAINING_INTERVAL,
         mov_avg_training,
         models_moving_avg,
         "National Moving.avg 5 (training)",
     )
 
-    testing_years = []
-    for YEAR in TESTING_INTERVAL:
-        testing_years.append(YEAR)
-
     national_yearly_testing = gen_cities_avg(climate, CITIES, TESTING_INTERVAL)
     mov_avg_testing = moving_average(national_yearly_testing, 5)
-    evaluate_models_on_testing(
-        testing_years,
+    evaluate_models_on_training(
+        TESTING_INTERVAL,
         mov_avg_testing,
         models_moving_avg,
         "National Moving.avg 5 (testing)",
