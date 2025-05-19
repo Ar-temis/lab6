@@ -286,7 +286,18 @@ def moving_average(y, window_length):
         y-coordinates of the N sample points
     """
     # TODO
-    pass
+    result = []
+    for i in range(len(y)):
+        sum = 0
+        if i < (window_length - 1):
+            for j in range(i + 1):
+                sum += y[j]
+            result.append(sum / (i + 1))
+        else:
+            for j in range(window_length):
+                sum += y[i - j]
+            result.append(sum / window_length)
+    return result
 
 
 def rmse(y, estimated):
@@ -354,12 +365,6 @@ def evaluate_models_on_testing(x, y, models):
 
 
 if __name__ == "__main__":
-    print(
-        generate_models(
-            pylab.array([1961, 1962, 1963]), pylab.array([-4.4, 5.5, -6.6]), [1, 2]
-        )
-    )
-
     # Part A.4
     x = []
     y_daily = []
