@@ -235,12 +235,12 @@ def evaluate_models_on_training(x, y, models, title):
         plt.xlabel("Year")
         plt.ylabel("Temperature in Celsius")
 
-        title = f"{title}\nDegree: {deg}, R²: {r2:.4f}"
+        showing_title = f"{title}\nDegree: {deg}, R²: {r2:.4f}"
         if deg == 1:
             se_slope = se_over_slope(x, y, estimated, model)
             title += f", SE/slope: {se_slope:.4f}"
 
-        plt.title(title)
+        plt.title(showing_title)
         plt.legend()
         plt.show()
 
@@ -371,9 +371,9 @@ def evaluate_models_on_testing(x, y, models, title):
         plt.plot(x, estimated, "r-", label=f"Degree {deg} fit")
         plt.xlabel("Year")
         plt.ylabel("Temperature in Celsius")
-        title = f"{title}\nDegree: {deg}, RMSE: {root_mean_se:.4f}"
+        showing_title = f"{title}\nDegree: {deg}, RMSE: {root_mean_se:.4f}"
 
-        plt.title(title)
+        plt.title(showing_title)
         plt.legend()
         plt.show()
 
@@ -396,13 +396,13 @@ if __name__ == "__main__":
         training_years,
         y_daily,
         models_daily,
-        "NEW YORK Daily (training)",
+        "NEW YORK Yearly on JAN 1st (training)",
     )
     evaluate_models_on_training(
         training_years,
         y_yearly,
         models_yearly,
-        "NEW YORK Yearly (training)",
+        "NEW YORK Yearly avg (training)",
     )
 
     # Part B
@@ -416,7 +416,7 @@ if __name__ == "__main__":
         training_years,
         national_yearly_training,
         models_national_deg_one,
-        "National Yearly (training)",
+        "National Yearly avg (training)",
     )
 
     # Part C
